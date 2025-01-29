@@ -2,6 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 var cors = require('cors')
+const multer = require("multer");
 
 // Initialize the app
 const app = express();
@@ -15,6 +16,9 @@ var corsOptions = {
 app.use(cors(corsOptions))
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+// Configure multer for file uploads
+const upload = multer({ dest: "uploads/" });
+
 
 // Global variable to store student details
 let students = [
@@ -78,6 +82,17 @@ app.delete("/students/:id", (req, res) => {
     } else {
         res.status(404).json({ message: "Student not found" });
     }
+});
+
+// File upload API
+app.post("/upload", upload.single("file"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+    res.status(200).json({
+        message: "File uploaded successfully",
+        fileDetails: req.file
+    });
 });
 
 // Start the server
