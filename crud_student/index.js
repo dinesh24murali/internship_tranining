@@ -3,10 +3,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 var cors = require('cors')
 const multer = require("multer");
-
 // Initialize the app
 const app = express();
 const port = 3000;
+
+// Configure multer for file uploads
+const upload = multer({ dest: "uploads/" });
 
 var corsOptions = {
     origin: '*',
@@ -16,9 +18,6 @@ var corsOptions = {
 app.use(cors(corsOptions))
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
-// Configure multer for file uploads
-const upload = multer({ dest: "uploads/" });
-
 
 // Global variable to store student details
 let students = [
@@ -31,6 +30,20 @@ let students = [
 // Get all students
 app.get("/students", (req, res) => {
     res.json(students);
+});
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+// Get all students with marks
+app.get("/students/marks", (req, res) => {
+    res.json(students.map(item => {
+        return {
+            ...item,
+            mark: getRandomInt(100),
+        }
+    }));
 });
 
 // Get a student by ID
